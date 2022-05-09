@@ -1,6 +1,6 @@
 import pygame
-import tkinter.filedialog
-import tkinter.messagebox
+import tkinter
+from tkinter import filedialog, messagebox
 from casilla import *
 from mapa import *
 from nodo import *
@@ -73,25 +73,28 @@ def obtenerMejor(listaNodos): #Devuelce el nodo con mayor h
     for n in listaNodos:
         if mejor == 0:
             mejor = n
-        elif mejor.getH() > n.getH():
+        elif mejor.getF() > n.getF():
             mejor = n
     return mejor
 
 def construirCamino(camino, nodo): #devuelve el coste del camino trazado y actualiza la matriz del camino marcando las casilla utilizadas
     g = nodo.getG()
-    while type(nodo.getPadre()) == Nodo:
+    while type(nodo.getPadre()) == Nodo or type(nodo.getPadre()) == NodoAjustado:
         nodo = nodo.getPadre()
         camino[nodo.getCasilla().getFila()][nodo.getCasilla().getCol()] = "*" #Pertenece al camino
 
     return g
 
-def listaHijos(nodo, mapa, destino): #devuelve una lista de los nodos hijos de otro nodo
+def listaHijos(nodo, mapa, destino, ajustado): #devuelve una lista de los nodos hijos de otro nodo
     lista = []
     for i in [0, -1, 1]:
         for j in [0, -1, 1]:
             casillaPrueba = Casilla(nodo.getCasilla().getFila() - i, nodo.getCasilla().getCol() - j)
-            if bueno(mapa, casillaPrueba):
-                lista.append(Nodo(casillaPrueba, nodo, destino))
+            if bueno(mapa, casillaPrueba) and not (i == j == 0):
+                if ajustado:
+                    lista.append(NodoAjustado(casillaPrueba, nodo, destino))
+                else:
+                    lista.append(Nodo(casillaPrueba, nodo, destino))
     return lista
 
 def seEncuentra(nodo, lista):
@@ -116,15 +119,15 @@ def comparaIncluye(lista, nodo): #comprueba si la casilla está en la lista, de 
 def equalsNodos(n1, n2):
     if not equalsCasillas(n1.getCasilla(), n2.getCasilla()):
         return False
-    if type(n1.getPadre()) == Nodo:
-        if type(n2.getPadre()) == Nodo:
+    if type(n1.getPadre()) == Nodo or type(n1.getPadre()) == NodoAjustado:
+        if type(n2.getPadre()) == Nodo or type(n2.getPadre()) == NodoAjustado:
             if not equalsCasillas(n1.getPadre().getCasilla(), n2.getPadre().getCasilla()):
                 return False
         else:
             if not equalsCasillas(n1.getPadre().getCasilla(), n2.getPadre()):
                 return False
     else:
-        if type(n2.getPadre()) == Nodo:
+        if type(n2.getPadre()) == Nodo or type(n2.getPadre()) == NodoAjustado:
             if not equalsCasillas(n1.getCasilla(), n2.getPadre().getCasilla()):
                 return False
         else:
@@ -155,7 +158,22 @@ def aEstrella(mapi, origen, destino, camino):
             listaFrontera.remove(n)
             listaInterior.append(n)
 
-            for m in eliminarDeLista(listaHijos(n, mapi, destino), listaInterior):
+            for m in eliminarDeLista(listaHijos(n, mapi, destino, False), listaInterior):
+                comparaIncluye(listaFrontera, m)
+    return -1
+
+def aEstrellaAjustado(mapi, origen, destino, camino):
+    listaInterior = []
+    listaFrontera = [NodoAjustado(origen, origen, destino)] #inicializala lista con el nodo origen
+    while len(listaFrontera) != 0:
+        n = obtenerMejor(listaFrontera) # obtiene el nodo con menor coste esperado
+        if equalsCasillas(n.getCasilla(), destino): #ha llegado a la meta
+            return construirCamino(camino, n)
+        else:
+            listaFrontera.remove(n)
+            listaInterior.append(n)
+
+            for m in eliminarDeLista(listaHijos(n, mapi, destino, True), listaInterior):
                 comparaIncluye(listaFrontera, m)
     return -1
 
@@ -163,6 +181,7 @@ def aEstrella(mapi, origen, destino, camino):
 
 # función principal
 def main():
+    modoAjustado = True
     root= tkinter.Tk() #para eliminar la ventana de Tkinter
     root.withdraw() #se cierra
     file=tkinter.filedialog.askopenfilename() #abre el explorador de archivos    
@@ -173,7 +192,7 @@ def main():
     reloj=pygame.time.Clock()    
     
     if not file:     #si no se elige un fichero coge el mapa por defecto   
-        file='mapa.txt'
+        file='Mundos/mapa.txt'
     
     mapi=Mapa(file)
     origen=mapi.getOrigen()    
@@ -185,10 +204,10 @@ def main():
     screen=pygame.display.set_mode(dimension)
     pygame.display.set_caption("Practica 1")
     
-    boton=pygame.image.load("boton.png").convert()
+    boton=pygame.image.load("Fuente/boton.png").convert()
     boton=pygame.transform.scale(boton,[50, 30])
     
-    personaje=pygame.image.load("pig.png").convert()
+    personaje=pygame.image.load("Fuente/pig.png").convert()
     personaje=pygame.transform.scale(personaje,[TAM, TAM])   
     
     coste=-1
@@ -222,7 +241,10 @@ def main():
                         destino=casi                        
                         camino=inic(mapi)
                         # llamar al A*
-                        coste=aEstrella(mapi, origen, destino, camino)      
+                        if modoAjustado:
+                            coste=aEstrellaAjustado(mapi, origen, destino, camino)
+                        else:
+                            coste=aEstrella(mapi, origen, destino, camino)      
                         if coste==-1:
                             tkinter.messagebox.showwarning(title='Error', message='No existe un camino entre origen y destino')                     
                         else:
