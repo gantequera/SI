@@ -1,5 +1,4 @@
 from math import sqrt
-
 from casilla import Casilla
 
 def heuristica0(c1, c2):
@@ -19,13 +18,13 @@ def heuristicaMinkowski(c1, c2):    #generalización de la euclidea y manhattan,
     return (abs(c2.getCol() - c1.getCol())**p + abs(c2.getFila() - c1.getFila())**p)**(1/p)
 
 class Nodo:
-    heuristicaSelec = 'eu'
+    heuristicaSelec = 'mi' #puede variar entre 'mi', 'eu', 'ma', 'di', 'ze'
     def __init__(self, casilla, padre, destino):
-        self.casilla = casilla
-        self.padre = padre
-        self.calcular(destino)
+        self.casilla = casilla      #Casilla del nodo actual
+        self.padre = padre          #Nodo padre
+        self.calcular(destino)      #Calcula g, h y f
 
-    def heuristica(self, c1, c2):
+    def heuristica(self, c1, c2): #Segun la heurística que esté seleccionada, devuelve la función correspondiente
         if Nodo.heuristicaSelec == 'mi':
             return heuristicaMinkowski(c1, c2)
         elif Nodo.heuristicaSelec == 'eu':
@@ -37,7 +36,7 @@ class Nodo:
         elif Nodo.heuristicaSelec == 'ze':
             return heuristica0(c1, c2)
  
-    def getHeuristica():
+    def getHeuristica(): #Devuelve la heurística seleccionada en formato str
         if Nodo.heuristicaSelec == 'mi':
             return 'Minkowski'
         elif Nodo.heuristicaSelec == 'eu':
@@ -64,9 +63,9 @@ class Nodo:
     def getPadre(self):
         return self.padre
 
-    def calcG(self):
+    def calcG(self): #Calcula g
         g = 0
-        if self.casilla != self.padre:
+        if self.casilla != self.padre: #Casilla y padre serán iguales en el caso en que sea el nodo inicial
             if abs(self.casilla.getFila() - self.padre.getCasilla().getFila()) == 1:
                 g = 1
             if abs(self.casilla.getCol() - self.padre.getCasilla().getCol()) == 1:
@@ -77,16 +76,16 @@ class Nodo:
             g += self.padre.getG()
         self.g = g
     
-    def calcH(self, destino):
+    def calcH(self, destino): #Calcula h mediante la heurística seleccionada
         self.h = self.heuristica(self.casilla, destino)
 
-    def calcular(self, destino):
+    def calcular(self, destino): #Calcula g, h y f para el nodo
         self.calcG()
         self.calcH(destino)
         self.f = self.g + self.h
 
 class NodoAjustado(Nodo):
-    w = 0.5
+    w = 0.5 #Ajuste de pesos
     def calcular(self, destino):
         self.calcG()
         self.calcH(destino)

@@ -62,9 +62,21 @@ def inic(mapi):
     
     return cam
 
+# Inicializa el mapa de nodos explorados
+def exploIni(mapi, origen):
+    map=[]
+    for i in range(mapi.alto):        
+        map.append([])
+        for j in range(mapi.ancho):   
+            if (origen.getFila() == i and origen.getCol() == j): 
+                map[i].append(0)
+            else:
+                map[i].append(-1)
+    return map
+
 #################################################################################################
 
-def equalsCasillas(c1, c2):
+def equalsCasillas(c1, c2): #Dos casillas son iguales si sus filas y columnas son iguales
     if c1.getFila() == c2.getFila() and c1.getCol() == c2.getCol():
         return True
     return False
@@ -98,7 +110,7 @@ def listaHijos(nodo, mapa, destino, ajustado): #devuelve una lista de los nodos 
                     lista.append(Nodo(casillaPrueba, nodo, destino))
     return lista
 
-def seEncuentra(nodo, lista):
+def seEncuentra(nodo, lista): #Comprueba si existe el nodo en la lista
     if len(lista) == 0:
         return False
     for n in lista:
@@ -106,7 +118,7 @@ def seEncuentra(nodo, lista):
             return True
     return False
 
-def comparaIncluye(lista, nodo): #comprueba si la casilla está en la lista, de ser así conserva la que menor g tenga. De no estar, la añade como nodo 
+def comparaIncluye(lista, nodo, mExplorados, nExplorados): #comprueba si la casilla está en la lista, de ser así conserva la que menor g tenga. De no estar, la añade como nodo 
     esta = False
     for n in lista:
         if equalsCasillas(n.getCasilla(), nodo.getCasilla()):
@@ -116,8 +128,10 @@ def comparaIncluye(lista, nodo): #comprueba si la casilla está en la lista, de 
             esta = True
     if not esta:
         lista.append(nodo)
+        mExplorados[nodo.getCasilla().getFila()][nodo.getCasilla().getCol()] = nExplorados[0] + 1
+        nExplorados[0] += 1
 
-def equalsNodos(n1, n2):
+def equalsNodos(n1, n2): #Si las casillas y las casillas de los padres son iguales, los nodos son iguales 
     if not equalsCasillas(n1.getCasilla(), n2.getCasilla()):
         return False
     if type(n1.getPadre()) == Nodo or type(n1.getPadre()) == NodoAjustado:
@@ -141,14 +155,14 @@ def eliminarDeLista(l1, l2): #Devuelve una lista resultado de la diferencia entr
     for n in l1:
         esta = False
         for m in l2:
-            if (equalsNodos(n, m)):
+            if (equalsCasillas(n.getCasilla(), m.getCasilla())):
                 esta = True
         if esta == False:
             lf.append(n)
     return lf
 
 #Algoritmo A*
-def aEstrella(mapi, origen, destino, camino):
+def aEstrella(mapi, origen, destino, camino, mExplorados, nExplorados):
     listaInterior = []
     listaFrontera = [Nodo(origen, origen, destino)] #inicializala lista con el nodo origen
     while len(listaFrontera) != 0:
@@ -160,10 +174,11 @@ def aEstrella(mapi, origen, destino, camino):
             listaInterior.append(n)
 
             for m in eliminarDeLista(listaHijos(n, mapi, destino, False), listaInterior):
-                comparaIncluye(listaFrontera, m)
+                comparaIncluye(listaFrontera, m, mExplorados, nExplorados)
     return -1
 
-def aEstrellaAjustado(mapi, origen, destino, camino):
+#Algoritmo A* con ajuste de pesos, igual que el A* pero emplea Nodos ajustados
+def aEstrellaAjustado(mapi, origen, destino, camino, mExplorados, nExplorados):
     listaInterior = []
     listaFrontera = [NodoAjustado(origen, origen, destino)] #inicializala lista con el nodo origen
     while len(listaFrontera) != 0:
@@ -175,7 +190,7 @@ def aEstrellaAjustado(mapi, origen, destino, camino):
             listaInterior.append(n)
 
             for m in eliminarDeLista(listaHijos(n, mapi, destino, True), listaInterior):
-                comparaIncluye(listaFrontera, m)
+                comparaIncluye(listaFrontera, m, mExplorados, nExplorados)
     return -1
 
 #########################################################################################################
@@ -256,11 +271,13 @@ def main():
                         destino=casi                        
                         camino=inic(mapi)
                         # llamar al A*
+                        nExplorados = [0]
+                        mExplorados = exploIni(mapi, origen)
                         start_t = time.time()
                         if modoAjustado:
-                            coste=aEstrellaAjustado(mapi, origen, destino, camino)
+                            coste=aEstrellaAjustado(mapi, origen, destino, camino, mExplorados, nExplorados)
                         else:
-                            coste=aEstrella(mapi, origen, destino, camino)      
+                            coste=aEstrella(mapi, origen, destino, camino, mExplorados, nExplorados)      
                         end_t = time.time() - start_t
                         if coste==-1:
                             tkinter.messagebox.showwarning(title='Error', message='No existe un camino entre origen y destino')                     
@@ -268,7 +285,21 @@ def main():
                             primeraVez=False  # hay un camino y el destino será el origen para el próximo movimiento
 
                         timing.write(f"Origen: [{origen.getFila()}, {origen.getCol()}]; Destino: [{destino.getFila()}, {destino.getCol()}]; Tiempo: {end_t * 1000}ms\n")
-                        
+                        timing.write("Camino:\n")
+                        for i in range(len(camino)):
+                            for j in range(len(camino[i])):
+                                timing.write(f"{camino[i][j]} ")
+                            timing.write('\n')
+                        timing.write("Camino explorado:\n")
+                        for i in range(len(mExplorados)):
+                            for j in range(len(mExplorados[i])):
+                                if mExplorados[i][j] > -1 and mExplorados[i][j] < 10:
+                                    timing.write(f" {mExplorados[i][j]} ")
+                                else:
+                                    timing.write(f"{mExplorados[i][j]} ")
+                            timing.write('\n')
+                        timing.write(f"Nodos exploraados: {nExplorados[0]}\n\n")
+
                     else: # se ha hecho click en una celda roja                
                         tkinter.messagebox.showwarning(title='Error', message='Esa casilla no es valida')                
           
