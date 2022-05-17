@@ -1,0 +1,24 @@
+
+Heuristica Cero {
+Origen: [12, 8]; Destino: [3, 1]; Tiempo: 210.5727195739746ms
+Origen: [3, 1]; Destino: [1, 15]; Tiempo: 143.27025413513184ms
+Origen: [1, 15]; Destino: [12, 12]; Tiempo: 83.56261253356934ms
+Origen: [12, 12]; Destino: [1, 10]; Tiempo: 141.0231590270996ms
+Origen: [1, 10]; Destino: [7, 4]; Tiempo: 71.95830345153809ms
+}
+
+Heuristica Diagonal {
+Origen: [12, 8]; Destino: [3, 1]; Tiempo: 35.58039665222168ms
+Origen: [3, 1]; Destino: [1, 15]; Tiempo: 29.100418090820312ms
+Origen: [1, 15]; Destino: [12, 12]; Tiempo: 8.063316345214844ms
+Origen: [12, 12]; Destino: [1, 10]; Tiempo: 32.38511085510254ms
+Origen: [1, 10]; Destino: [7, 4]; Tiempo: 16.92056655883789ms
+}
+
+Heuristica Manhattan {
+Origen: [12, 8]; Destino: [3, 1]; Tiempo: 3.968954086303711ms
+Origen: [3, 1]; Destino: [1, 15]; Tiempo: 20.148277282714844ms
+Origen: [1, 15]; Destino: [12, 12]; Tiempo: 9.218931198120117ms
+Origen: [12, 12]; Destino: [1, 10]; Tiempo: 7.426261901855469ms
+Origen: [1, 10]; Destino: [7, 4]; Tiempo: 3.476381301879883ms
+}

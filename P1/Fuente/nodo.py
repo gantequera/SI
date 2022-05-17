@@ -2,6 +2,9 @@ from math import sqrt
 
 from casilla import Casilla
 
+def heuristica0(c1, c2):
+    return 0
+
 def heuristicaDiagonal(c1, c2):
     return max(abs(c1.getFila() - c2.getFila()), abs(c1.getCol() - c2.getCol()))
 
@@ -16,10 +19,35 @@ def heuristicaMinkowski(c1, c2):    #generalización de la euclidea y manhattan,
     return (abs(c2.getCol() - c1.getCol())**p + abs(c2.getFila() - c1.getFila())**p)**(1/p)
 
 class Nodo:
+    heuristicaSelec = 'eu'
     def __init__(self, casilla, padre, destino):
         self.casilla = casilla
         self.padre = padre
         self.calcular(destino)
+
+    def heuristica(self, c1, c2):
+        if Nodo.heuristicaSelec == 'mi':
+            return heuristicaMinkowski(c1, c2)
+        elif Nodo.heuristicaSelec == 'eu':
+            return heuristicaEuclidea(c1, c2)
+        elif Nodo.heuristicaSelec == 'ma':
+            return heuristicaManhattan(c1, c2)
+        elif Nodo.heuristicaSelec == 'di':
+            return heuristicaDiagonal(c1, c2)
+        elif Nodo.heuristicaSelec == 'ze':
+            return heuristica0(c1, c2)
+ 
+    def getHeuristica():
+        if Nodo.heuristicaSelec == 'mi':
+            return 'Minkowski'
+        elif Nodo.heuristicaSelec == 'eu':
+            return 'Euclidea'
+        elif Nodo.heuristicaSelec == 'ma':
+            return 'Manhattan'
+        elif Nodo.heuristicaSelec == 'di':
+            return 'Diagonal'
+        elif Nodo.heuristicaSelec == 'ze':
+            return 'Cero'
 
     def getF(self):
         return self.f
@@ -50,8 +78,7 @@ class Nodo:
         self.g = g
     
     def calcH(self, destino):
-        #self.h = max(heuristicaEuclidea(self.casilla, destino), heuristicaDiagonal(self.casilla, destino), heuristicaManhattan(self.casilla, destino))
-        self.h = heuristicaMinkowski(self.casilla, destino)
+        self.h = self.heuristica(self.casilla, destino)
 
     def calcular(self, destino):
         self.calcG()

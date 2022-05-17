@@ -1,0 +1,8 @@
+
+Heuristica Cero {
+Origen: [12, 8]; Destino: [3, 1]; Tiempo: 201.9174098968506ms
+Origen: [3, 1]; Destino: [1, 15]; Tiempo: 138.19217681884766ms
+Origen: [1, 15]; Destino: [12, 12]; Tiempo: 78.00793647766113ms
+Origen: [12, 12]; Destino: [1, 10]; Tiempo: 140.0930881500244ms
+Origen: [1, 10]; Destino: [7, 4]; Tiempo: 74.52630996704102ms
+}

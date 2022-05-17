@@ -5,6 +5,7 @@ from casilla import *
 from mapa import *
 from nodo import *
 from pygame.locals import *
+import time
 
 MARGEN=5
 MARGEN_INFERIOR=60
@@ -181,7 +182,7 @@ def aEstrellaAjustado(mapi, origen, destino, camino):
 
 # función principal
 def main():
-    modoAjustado = True
+    modoAjustado = False
     root= tkinter.Tk() #para eliminar la ventana de Tkinter
     root.withdraw() #se cierra
     file=tkinter.filedialog.askopenfilename() #abre el explorador de archivos    
@@ -192,8 +193,16 @@ def main():
     reloj=pygame.time.Clock()    
     
     if not file:     #si no se elige un fichero coge el mapa por defecto   
-        file='Mundos/mapa.txt'
-    
+        file='Mundos/mapa.txt' 
+
+    wname = ''
+    for i in file:
+        if i == '.':
+            break
+        wname += i
+        if i == '/':
+            wname = ''
+
     mapi=Mapa(file)
     origen=mapi.getOrigen()    
     camino=inic(mapi)   
@@ -214,6 +223,12 @@ def main():
     running= True
     primeraVez=True
     
+    if modoAjustado:
+        timing = open(f"Fuente/timing/datos-{wname}-ajustado.txt", "a")
+    else:
+        timing = open(f"Fuente/timing/datos-{wname}.txt", "a")
+    timing.write(f"\nHeuristica {Nodo.getHeuristica()}" + " {\n")
+
     while running:        
         #procesamiento de eventos
         for event in pygame.event.get():
@@ -241,17 +256,21 @@ def main():
                         destino=casi                        
                         camino=inic(mapi)
                         # llamar al A*
+                        start_t = time.time()
                         if modoAjustado:
                             coste=aEstrellaAjustado(mapi, origen, destino, camino)
                         else:
                             coste=aEstrella(mapi, origen, destino, camino)      
+                        end_t = time.time() - start_t
                         if coste==-1:
                             tkinter.messagebox.showwarning(title='Error', message='No existe un camino entre origen y destino')                     
                         else:
                             primeraVez=False  # hay un camino y el destino será el origen para el próximo movimiento
+
+                        timing.write(f"Origen: [{origen.getFila()}, {origen.getCol()}]; Destino: [{destino.getFila()}, {destino.getCol()}]; Tiempo: {end_t * 1000}ms\n")
+                        
                     else: # se ha hecho click en una celda roja                
-                        tkinter.messagebox.showwarning(title='Error', message='Esa casilla no es valida')
-                
+                        tkinter.messagebox.showwarning(title='Error', message='Esa casilla no es valida')                
           
         #código de dibujo        
         #limpiar pantalla
@@ -284,8 +303,10 @@ def main():
             
         #actualizar pantalla
         pygame.display.flip()
-        reloj.tick(40)        
-       
+        reloj.tick(40)
+
+    timing.write('}\n')
+    timing.close()
         
     pygame.quit()
     
