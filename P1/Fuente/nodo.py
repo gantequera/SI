@@ -18,7 +18,7 @@ def heuristicaMinkowski(c1, c2):    #generalización de la euclidea y manhattan,
     return (abs(c2.getCol() - c1.getCol())**p + abs(c2.getFila() - c1.getFila())**p)**(1/p)
 
 class Nodo:
-    heuristicaSelec = 'mi' #puede variar entre 'mi', 'eu', 'ma', 'di', 'ze'
+    heuristicaSelec = 'eu' #puede variar entre 'mi', 'eu', 'ma', 'di', 'ze'
     def __init__(self, casilla, padre, destino):
         self.casilla = casilla      #Casilla del nodo actual
         self.padre = padre          #Nodo padre

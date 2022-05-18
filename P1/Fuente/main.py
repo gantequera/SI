@@ -284,7 +284,7 @@ def main():
                         else:
                             primeraVez=False  # hay un camino y el destino será el origen para el próximo movimiento
 
-                        timing.write(f"Origen: [{origen.getFila()}, {origen.getCol()}]; Destino: [{destino.getFila()}, {destino.getCol()}]; Tiempo: {end_t * 1000}ms\n")
+                        timing.write(f"Origen: [{origen.getFila()}, {origen.getCol()}]; Destino: [{destino.getFila()}, {destino.getCol()}]; Tiempo: {end_t * 1000} ms\n")
                         timing.write("Camino:\n")
                         for i in range(len(camino)):
                             for j in range(len(camino[i])):
@@ -293,12 +293,20 @@ def main():
                         timing.write("Camino explorado:\n")
                         for i in range(len(mExplorados)):
                             for j in range(len(mExplorados[i])):
-                                if mExplorados[i][j] > -1 and mExplorados[i][j] < 10:
-                                    timing.write(f" {mExplorados[i][j]} ")
+                                if nExplorados[0] < 100:
+                                    if mExplorados[i][j] > -1 and mExplorados[i][j] < 10:
+                                        timing.write(f" {mExplorados[i][j]} ")
+                                    else:
+                                        timing.write(f"{mExplorados[i][j]} ")
                                 else:
-                                    timing.write(f"{mExplorados[i][j]} ")
+                                    if mExplorados[i][j] > -1 and mExplorados[i][j] < 10:
+                                        timing.write(f"  {mExplorados[i][j]} ")
+                                    elif mExplorados[i][j] >= 10 and mExplorados[i][j] < 100 or mExplorados[i][j] == -1:
+                                        timing.write(f" {mExplorados[i][j]} ")
+                                    else:
+                                        timing.write(f"{mExplorados[i][j]} ")
                             timing.write('\n')
-                        timing.write(f"Nodos exploraados: {nExplorados[0]}\n\n")
+                        timing.write(f"Nodos explorados: {nExplorados[0]}\n\n")
 
                     else: # se ha hecho click en una celda roja                
                         tkinter.messagebox.showwarning(title='Error', message='Esa casilla no es valida')                
