@@ -1,0 +1,6 @@
+mapa mapa2 mapa3 mapaChico mapaCruz mapaCubo mapaCuboDoble mapaGrande mapaLaberinto mapaPlano 
+ce 109 26 26 23 47 489 436 181 99 55
+di 47 16 23 21 41 419 436 131 99 42
+ma 26 12 18 14 30 290 409 49 88 29
+eu 39 14 21 14 36 399 434 123 99 39
+mi 36 14 21 14 35 385 434 122 99 38

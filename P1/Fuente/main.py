@@ -92,7 +92,7 @@ def obtenerMejor(listaNodos): #Devuelce el nodo con mayor h
 
 def construirCamino(camino, nodo): #devuelve el coste del camino trazado y actualiza la matriz del camino marcando las casilla utilizadas
     g = nodo.getG()
-    while type(nodo.getPadre()) == Nodo or type(nodo.getPadre()) == NodoAjustado:
+    while type(nodo.getPadre()) == Nodo or type(nodo.getPadre()) == NodoAjustado: #La casilla origen se guarda como casilla y no como nodo
         nodo = nodo.getPadre()
         camino[nodo.getCasilla().getFila()][nodo.getCasilla().getCol()] = "*" #Pertenece al camino
 
@@ -197,7 +197,8 @@ def aEstrellaAjustado(mapi, origen, destino, camino, mExplorados, nExplorados):
 
 # función principal
 def main():
-    modoAjustado = False
+    modoAjustado = True
+    test = True #Para utilizar el modo de testeo y que devuelva el tiempo
     root= tkinter.Tk() #para eliminar la ventana de Tkinter
     root.withdraw() #se cierra
     file=tkinter.filedialog.askopenfilename() #abre el explorador de archivos    
@@ -238,11 +239,13 @@ def main():
     running= True
     primeraVez=True
     
-    if modoAjustado:
-        timing = open(f"Fuente/timing/datos-{wname}-ajustado.txt", "a")
-    else:
-        timing = open(f"Fuente/timing/datos-{wname}.txt", "a")
-    timing.write(f"\nHeuristica {Nodo.getHeuristica()}" + " {\n")
+    #Descomentar para almacenar datos
+    #if modoAjustado:
+    #    timing = open(f"Fuente/timing/datos-{wname}-ajustado.txt", "a")
+    #else:
+    #    timing = open(f"Fuente/timing/datos-{wname}.txt", "a")
+    #timing.write(f"\nHeuristica {Nodo.getHeuristica()}" + " {\n")
+    #
 
     while running:        
         #procesamiento de eventos
@@ -284,29 +287,30 @@ def main():
                         else:
                             primeraVez=False  # hay un camino y el destino será el origen para el próximo movimiento
 
-                        timing.write(f"Origen: [{origen.getFila()}, {origen.getCol()}]; Destino: [{destino.getFila()}, {destino.getCol()}]; Tiempo: {end_t * 1000} ms\n")
-                        timing.write("Camino:\n")
-                        for i in range(len(camino)):
-                            for j in range(len(camino[i])):
-                                timing.write(f"{camino[i][j]} ")
-                            timing.write('\n')
-                        timing.write("Camino explorado:\n")
-                        for i in range(len(mExplorados)):
-                            for j in range(len(mExplorados[i])):
-                                if nExplorados[0] < 100:
-                                    if mExplorados[i][j] > -1 and mExplorados[i][j] < 10:
-                                        timing.write(f" {mExplorados[i][j]} ")
-                                    else:
-                                        timing.write(f"{mExplorados[i][j]} ")
-                                else:
-                                    if mExplorados[i][j] > -1 and mExplorados[i][j] < 10:
-                                        timing.write(f"  {mExplorados[i][j]} ")
-                                    elif mExplorados[i][j] >= 10 and mExplorados[i][j] < 100 or mExplorados[i][j] == -1:
-                                        timing.write(f" {mExplorados[i][j]} ")
-                                    else:
-                                        timing.write(f"{mExplorados[i][j]} ")
-                            timing.write('\n')
-                        timing.write(f"Nodos explorados: {nExplorados[0]}\n\n")
+                        #Descomentar para almacenar datos
+                        #timing.write(f"Origen: [{origen.getFila()}, {origen.getCol()}]; Destino: [{destino.getFila()}, {destino.getCol()}]; Tiempo: {end_t * 1000} ms\n")
+                        #timing.write("Camino:\n")
+                        #for i in range(len(camino)):
+                        #    for j in range(len(camino[i])):
+                        #        timing.write(f"{camino[i][j]} ")
+                        #    timing.write('\n')
+                        #timing.write("Camino explorado:\n")
+                        #for i in range(len(mExplorados)):
+                        #    for j in range(len(mExplorados[i])):
+                        #        if nExplorados[0] < 100:
+                        #            if mExplorados[i][j] > -1 and mExplorados[i][j] < 10:
+                        #                timing.write(f" {mExplorados[i][j]} ")
+                        #            else:
+                        #                timing.write(f"{mExplorados[i][j]} ")
+                        #        else:
+                        #            if mExplorados[i][j] > -1 and mExplorados[i][j] < 10:
+                        #                timing.write(f"  {mExplorados[i][j]} ")
+                        #            elif mExplorados[i][j] >= 10 and mExplorados[i][j] < 100 or mExplorados[i][j] == -1:
+                        #                timing.write(f" {mExplorados[i][j]} ")
+                        #            else:
+                        #                timing.write(f"{mExplorados[i][j]} ")
+                        #    timing.write('\n')
+                        #timing.write(f"Nodos explorados: {nExplorados[0]}\n\n")
 
                     else: # se ha hecho click en una celda roja                
                         tkinter.messagebox.showwarning(title='Error', message='Esa casilla no es valida')                
@@ -344,10 +348,12 @@ def main():
         pygame.display.flip()
         reloj.tick(40)
 
-    timing.write('}\n')
-    timing.close()
+    #timing.write('}\n')
+    #timing.close()
         
     pygame.quit()
+    if test:
+       return end_t
     
 #---------------------------------------------------------------------
 if __name__=="__main__":

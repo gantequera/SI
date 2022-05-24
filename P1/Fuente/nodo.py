@@ -14,11 +14,11 @@ def heuristicaEuclidea(c1, c2):
     return sqrt((c2.getCol() - c1.getCol())**2 + (c2.getFila() - c1.getFila())**2)
 
 def heuristicaMinkowski(c1, c2):    #generalización de la euclidea y manhattan, donde el exponente en lugar de ser 2 o 1,
-    p = 3                           #respectivamente para las otras, se ha escogido 3
+    p = 1.718                           #respectivamente para las otras, se ha escogido 3
     return (abs(c2.getCol() - c1.getCol())**p + abs(c2.getFila() - c1.getFila())**p)**(1/p)
 
 class Nodo:
-    heuristicaSelec = 'eu' #puede variar entre 'mi', 'eu', 'ma', 'di', 'ze'
+    heuristicaSelec = 'mi' #puede variar entre 'mi', 'eu', 'ma', 'di', 'ze'
     def __init__(self, casilla, padre, destino):
         self.casilla = casilla      #Casilla del nodo actual
         self.padre = padre          #Nodo padre
@@ -33,7 +33,7 @@ class Nodo:
             return heuristicaManhattan(c1, c2)
         elif Nodo.heuristicaSelec == 'di':
             return heuristicaDiagonal(c1, c2)
-        elif Nodo.heuristicaSelec == 'ze':
+        elif Nodo.heuristicaSelec == 'ce':
             return heuristica0(c1, c2)
  
     def getHeuristica(): #Devuelve la heurística seleccionada en formato str
@@ -45,7 +45,7 @@ class Nodo:
             return 'Manhattan'
         elif Nodo.heuristicaSelec == 'di':
             return 'Diagonal'
-        elif Nodo.heuristicaSelec == 'ze':
+        elif Nodo.heuristicaSelec == 'ce':
             return 'Cero'
 
     def getF(self):

@@ -54,10 +54,8 @@ def leer(archivo):
                 if cadena[i] == "O":
                     mapa[fila].append(2)
                     origen= Casilla(fila,i//2)                    
-                    
     except:
         print ("Error de fichero")
-        fich.close()
         
     fich.close()
     return mapa, origen
