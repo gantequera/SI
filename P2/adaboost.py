@@ -1,28 +1,32 @@
-import clasificador_debil as cd
+import clasificador_debil as cd, math, numpy as np, matplotlib.pyplot as plt
 
 def entrenar(X, Y, T, A):
     clasificadores_debiles = []
     alphas = []
+    D = np.full(len(X), 1.0/len(X))
 
-    ###########################
-    #### Bloque de ejemplo ####
+    for t in range(T):
+        conjuntos = []
+        for k in range(A):
+            c_d = cd.generar_clasificador_debil(28*28)                  # Obtenemos un clasificador debil
+            clas = cd.aplicar_clasificador_debil(c_d, X)         # Guardamos las clasificaciones de las imagenes
+            eps = np.sum(cd.obtener_error(c_d, X, Y, D))      # Calculamos el error 
+            conjuntos.append((c_d, eps, clas))
+        pri = True
+        for elem in conjuntos:
+            if pri:
+                fc = elem
+                pri = False
+                continue
+            if elem[1] < fc[1]:           # Guardamos el conjunto con menor error
+                fc = elem  
+        alph = 0.5*math.log2((1-fc[1])/fc[1])
+        alphas.append(alph)
+        clasificadores_debiles.append(fc[0])
 
-    # Datos
-    imagenes_X = [[3,234,50], [1,89,100], [245,130,134]]
-    etiquetas_Y = [1, -1, 1]
-    D = [0,0,0]
-
-    # Obtenemos un clasificador debil
-    c_d = cd.generar_clasificador_debil(28*28)
-
-    # Aplicamos el clasificador a una imagen
-    res = cd.aplicar_clasificador_debil(c_d, imagenes_X[0])
-
-    # Calculamos el error 
-    error = cd.obtener_error(c_d, imagenes_X, etiquetas_Y, D)
-
-    ##########################
-
-    print("COMPLETAR ENTRENAMIENTO")
-    
+        Z = np.sum(D)
+        for i in range(len(D)):
+            D[i] = (D[i]*(math.e**(-alph*Y[i] * fc[2][i])))/Z
+        
     return (clasificadores_debiles, alphas)
+
