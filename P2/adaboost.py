@@ -29,4 +29,3 @@ def entrenar(X, Y, T, A):
             D[i] = (D[i]*(math.e**(-alph*Y[i] * fc[2][i])))/Z
         
     return (clasificadores_debiles, alphas)
-
