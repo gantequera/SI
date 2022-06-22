@@ -1,4 +1,6 @@
-import clasificador_debil as cd, math, numpy as np, matplotlib.pyplot as plt
+import clasificador_debil as cd
+import math
+import numpy as np
 
 def entrenar(X, Y, T, A):
     clasificadores_debiles = []

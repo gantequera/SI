@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import clasificador_debil as cd
 
-DIV = 40000
+DIV = 15000
 
 def adaptar_conjuntos_t(mnist_X, mnist_Y, n):
     X = mnist_X[:DIV].reshape(DIV, 784)
@@ -17,7 +17,7 @@ def adaptar_conjuntos_t(mnist_X, mnist_Y, n):
 
 def adaptar_conjuntos_test(mnist_X, mnist_Y):
   X = mnist_X.copy()
-  X = np.reshape(X[DIV:], (60000 - DIV, 784))
+  X = np.reshape(X[:DIV], (DIV, 784))
 
   return (X, mnist_Y)
 

@@ -7,11 +7,11 @@ npzfile = np.load("mnist.npz")  # Datos
 mnist_X = npzfile['x']
 mnist_Y = npzfile['y']
 
-T = 100
-A = 700
+T = 10
+A = 500
 
-At = range(100, 2101, 80)
-Ta = range(40, 401, 40)
+At = range(100, 1301, 80)
+Ta = range(40, 321, 40)
 
 (rA, rT) = test.valorarAT(mnist_X, mnist_Y, A, T, At, Ta)
 
@@ -20,14 +20,14 @@ rTcorr = [np.average(i) for i in rT]
 
 plt.figure()
 plt.plot(At, rAcorr, 'r-o')
-plt.title("T = 50")
-plt.savefig("valA.pdf", format="pdf")
+plt.title(f"Precisión del sistema en función de A con T = {T}")
+plt.savefig("valAc.pdf", format="pdf")
 plt.close()
 
 plt.figure()
 plt.plot(Ta, rTcorr, 'b-o')
-plt.title("A = 200")
-plt.savefig("valT.pdf", format="pdf")
+plt.title(f"Precisión del sistema en función de T con A = {A}")
+plt.savefig("valTc.pdf", format="pdf")
 
 #(clasificadores, alphas) = entrenar_sistema(mnist_X, mnist_Y, T, A)
 #(testX, testY) = utils.adaptar_conjuntos_test(mnist_X, mnist_Y)

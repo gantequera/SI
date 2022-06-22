@@ -1,6 +1,5 @@
 import utils
 import adaboost
-import math
 import numpy as np
 
 def test(X, Y, clasificadores, alphas):
