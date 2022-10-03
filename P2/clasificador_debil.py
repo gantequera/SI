@@ -1,5 +1,6 @@
 # Dimension con la que vamos a trabajar. En nuestro caso 28*28
 import random
+import numpy as np
 
 def generar_clasificador_debil(dimension_datos):
     return (random.randint(0, dimension_datos-1), random.randint(0, 255), random.choice((-1, 1)))

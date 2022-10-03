@@ -1,33 +1,37 @@
 # Importamos las librerias que necesitaremos
 import numpy as np
 import matplotlib.pyplot as plt
-import test
+import clasificador_debil as cd
+import utils
 
 npzfile = np.load("mnist.npz")  # Datos
 mnist_X = npzfile['x']
 mnist_Y = npzfile['y']
 
-T = 10
-A = 500
+setim = utils.adaptar_conjuntos_t(mnist_X, mnist_Y, 3)
+uwu = cd.aplicar_clasificador_debil(cd.generar_clasificador_debil(28*28), setim[0])
 
-At = range(100, 1301, 80)
-Ta = range(40, 321, 40)
+#T = 10
+#A = 500
 
-(rA, rT) = test.valorarAT(mnist_X, mnist_Y, A, T, At, Ta)
+#At = range(100, 1301, 80)
+#Ta = range(40, 321, 40)
 
-rAcorr = [np.average(i) for i in rA]
-rTcorr = [np.average(i) for i in rT]
+#(rA, rT) = test.valorarAT(mnist_X, mnist_Y, A, T, At, Ta)
 
-plt.figure()
-plt.plot(At, rAcorr, 'r-o')
-plt.title(f"Precisión del sistema en función de A con T = {T}")
-plt.savefig("valAc.pdf", format="pdf")
-plt.close()
+#rAcorr = [np.average(i) for i in rA]
+#rTcorr = [np.average(i) for i in rT]
 
-plt.figure()
-plt.plot(Ta, rTcorr, 'b-o')
-plt.title(f"Precisión del sistema en función de T con A = {A}")
-plt.savefig("valTc.pdf", format="pdf")
+#plt.figure()
+#plt.plot(At, rAcorr, 'r-o')
+#plt.title(f"Precisión del sistema en función de A con T = {T}")
+#plt.savefig("valAc.pdf", format="pdf")
+#plt.close()
+
+#plt.figure()
+#plt.plot(Ta, rTcorr, 'b-o')
+#plt.title(f"Precisión del sistema en función de T con A = {A}")
+#plt.savefig("valTc.pdf", format="pdf")
 
 #(clasificadores, alphas) = entrenar_sistema(mnist_X, mnist_Y, T, A)
 #(testX, testY) = utils.adaptar_conjuntos_test(mnist_X, mnist_Y)
